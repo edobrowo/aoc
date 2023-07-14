@@ -1,6 +1,6 @@
-const { readFileSync } = require('fs');
+import { readFileSync } from 'fs';
 
-const inputPath = '01/adventofcode.com_2022_day_1_input.txt';
+const inputPath = 'adventofcode.com_2022_day_1_input.txt';
 
 const fileData = readFileSync(inputPath, 'utf8').trim();
 
@@ -21,4 +21,4 @@ const sumTop3 = top3.reduce((sum, cal) => sum + cal);
 console.log(max)
 
 // Part 2
-console.log()
+console.log(sumTop3)
