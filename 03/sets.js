@@ -1,10 +1,12 @@
 const set0 = new Set([1, 2, 3]);
 console.log(set0);
+console.log(set0.size);
 
 set0.add(1);
 set0.add(2);
 set0.add(4);
 console.log(set0);
+console.log(set0.size);
 
 const list = [1, 2, 3, 4, 5];
 const set1 = new Set(list);
