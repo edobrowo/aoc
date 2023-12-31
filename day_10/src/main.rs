@@ -55,7 +55,6 @@ fn solve_a(map: &mut Map) -> (u32, HashSet<(usize, usize)>) {
                     _ => unreachable!(),
                 };
                 if !map.tiles[row][col][from] {
-                    dbg!(row, col, from, to);
                     break None;
                 }
                 to = (0..4)
