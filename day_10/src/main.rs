@@ -4,7 +4,7 @@ use std::io::{self, BufRead};
 use std::path;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    const INPUT_PATH: &str = "input.txt";
+    const INPUT_PATH: &str = "example1.txt";
 
     let lines = read_lines(INPUT_PATH)?;
     let map = parse(lines)?;
@@ -27,39 +27,52 @@ fn solve_b(map: &Map) -> u32 {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
-enum Direction {
-    North,
-    South,
-    East,
-    West,
+struct Pipe {
+    n: bool,
+    s: bool,
+    w: bool,
+    e: bool,
 }
-
-impl Direction {
-    pub fn from_pos(from: (i32, i32), to: (i32, i32)) -> Option<Direction> {
-        let dx = to.0 - from.0 / i32::abs(to.0 - from.0);
-        let dy = to.1 - from.1 / i32::abs(to.1 - from.1);
-        match (dx, dy) {
-            (-1, 0) => Some(Direction::West),
-            (1, 0) => Some(Direction::East),
-            (0, -1) => Some(Direction::North),
-            (0, 1) => Some(Direction::South),
-            _ => None,
-        }
-    }
-}
-
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-struct Pipe(Direction, Direction);
 
 impl Pipe {
     pub fn from_char(c: char) -> Option<Pipe> {
         match c {
-            '|' => Some(Pipe(Direction::North, Direction::South)),
-            '-' => Some(Pipe(Direction::West, Direction::East)),
-            'L' => Some(Pipe(Direction::North, Direction::East)),
-            'J' => Some(Pipe(Direction::West, Direction::North)),
-            '7' => Some(Pipe(Direction::West, Direction::South)),
-            'F' => Some(Pipe(Direction::South, Direction::East)),
+            '|' => Some(Pipe {
+                n: true,
+                s: true,
+                w: false,
+                e: false,
+            }),
+            '-' => Some(Pipe {
+                n: false,
+                s: false,
+                w: true,
+                e: true,
+            }),
+            'L' => Some(Pipe {
+                n: true,
+                s: false,
+                w: false,
+                e: true,
+            }),
+            'J' => Some(Pipe {
+                n: true,
+                s: false,
+                w: true,
+                e: false,
+            }),
+            '7' => Some(Pipe {
+                n: false,
+                s: true,
+                w: true,
+                e: false,
+            }),
+            'F' => Some(Pipe {
+                n: false,
+                s: true,
+                w: false,
+                e: true,
+            }),
             _ => None,
         }
     }
@@ -88,6 +101,17 @@ impl Tile {
         } else {
             None
         }
+    }
+
+    pub fn can_connect(&self, other: &Tile) -> bool {
+        let f = self.pipe();
+        let t = other.pipe();
+        if (f.is_none() || t.is_none()) {
+            return false;
+        }
+        let f = self.pipe().unwrap();
+        let t = other.pipe().unwrap();
+        true
     }
 }
 
@@ -151,22 +175,11 @@ fn parse(lines: io::Lines<io::BufReader<fs::File>>) -> Result<Map, Box<dyn Error
         }
     }
 
-    let mut stile = Tile::Animal;
-    let v = [(-1, 0), (0, -1), (0, 1), (1, 0)];
-    for (i, (x1, y1)) in v.iter().enumerate() {
-        let x1 = sx + x1;
-        let y1 = sy + y1;
-        if x1 < 0 || x1 >= tiles.len() as i32 || y1 < 0 || y1 >= tiles[0].len() as i32 {
-            continue;
-        }
-        for (x2, y2) in &v[i + 1..] {
-            let x2 = sx + x2;
-            let y2 = sy + y2;
-            if x2 < 0 || x2 >= tiles.len() as i32 || y2 < 0 || y2 >= tiles[0].len() as i32 {
-                continue;
-            }
-        }
-    }
+    // Assume S is not at the edge
+    let u = &tiles[sy as usize - 1][sx as usize].pipe();
+    let d = &tiles[sy as usize + 1][sx as usize].pipe();
+    let l = &tiles[sy as usize][sx as usize - 1].pipe();
+    let r = &tiles[sy as usize][sx as usize + 1].pipe();
 
     Ok(Map { tiles, sx, sy })
 }
