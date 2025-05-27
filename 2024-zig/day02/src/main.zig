@@ -1,7 +1,5 @@
 const std = @import("std");
 
-const print = std.debug.print;
-
 const Ordering = enum { Increasing, Decreasing, Equal };
 
 fn getOrder(a: u32, b: u32) Ordering {
@@ -17,8 +15,8 @@ pub fn main() !void {
     const file = try std.fs.cwd().openFile("input.txt", .{});
     defer file.close();
 
-    var bw = std.io.bufferedReader(file.reader());
-    const in_stream = bw.reader();
+    var br = std.io.bufferedReader(file.reader());
+    const in_stream = br.reader();
 
     var buf: [1024]u8 = undefined;
 
