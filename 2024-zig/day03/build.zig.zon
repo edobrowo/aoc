@@ -1,0 +1,11 @@
+.{
+    .name = .day03,
+    .version = "0.0.0",
+    .fingerprint = 0x12bcb2cc1fe71f23, // Changing this has security and trust implications.
+    .minimum_zig_version = "0.14.0",
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
